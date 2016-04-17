@@ -1,0 +1,8 @@
+.DS_Store
+a.out
+*.a
+*.o
+
+/data
+/test
+/src/z_search_
