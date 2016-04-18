@@ -22,9 +22,9 @@ typedef struct document* doc_ptr;
 struct document {
 
 	unsigned int D_ID;
-	unsigned int freq;
-	unsigned int doc_len;
+	unsigned int freq;// tf
 	char location = 'a';// a for title, b for content
+	unsigned int doc_len;
 
 	document(unsigned int id, unsigned int myfreq, unsigned int len, char location):
 		D_ID(id), freq(myfreq), doc_len(len), location(location) {}
@@ -43,7 +43,7 @@ private:
 	node_map m_children; //use hashmap or map to save children for efficient search
 public:
 	//std::map<unsigned int, unsigned int> DOCID2;// id and freq
-	std::map<unsigned int, doc_ptr> DOCID;// id and freq
+	std::map<unsigned int, doc_ptr> DOCID;
 
 public:
 	Node() { chr = ' '; isleaf = false; }
@@ -188,7 +188,7 @@ void Trie::insertWord(std::string s, unsigned int docid, unsigned int freq, unsi
 	//current->DOCID.push_back(docid);
 	auto search_map = current->DOCID.find(docid);
 	if(search_map == current->DOCID.end()) {
-		current->DOCID.emplace(docid, new document(docid, freq, doc_len));
+		current->DOCID.emplace(docid, new document(docid, freq, doc_len, 'a'));
 	} else {
 		//TODO : nothing ? is ok
 	}

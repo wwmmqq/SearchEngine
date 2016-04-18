@@ -7,7 +7,10 @@
 #include <unordered_map>
 #include <algorithm>
 
+#include "base_function.cc"
 #include "mytrietree.cc"
+#include "BM25.cc"
+
 
 using std::string; using std::endl; using std::cout;
 
@@ -140,8 +143,8 @@ int main()
 	//cout << "\n Dict total word is : " <<  Dict.size() << endl;// total word is : 48932
 	cout << "\n Trie total word is : " <<myTree.getWordsCnt() <<endl;
 
-
 	//////////////// test trie ///////////////////////////////////////
+	/*
 	std::unordered_set<unsigned int> sr[3];
 	std::unordered_set<unsigned int> SearchResultSet1;
 	std::unordered_set<unsigned int> SearchResultSet2;
@@ -149,13 +152,19 @@ int main()
 	sr[0] = SearchResultSet1;
 	sr[1] = SearchResultSet2;
 	sr[2] = SearchResultSet3;
+	*/
+
+	node_ptr result_ptr[10];
 
 	std::string myin;
 	int search_id = 0;
 	while(std::cin >> myin) {
 	    if(myin == "stop")
 	        break;
+
 	    node_ptr search_p = myTree.search(myin);
+	    result_ptr[search_id] = search_p;
+
 	    if (search_p != nullptr) {
 	    	cout<< "ok" <<endl;
 
@@ -167,7 +176,7 @@ int main()
 	    			cout<<"Top 10 id: "<< i<<" " << myin << " in : "<< it->first 
 	    					<< " freq: " << it->second->getFreq()
 	    					<< " doc_len: " << it->second->getDoc_len() << "\n";
-	    		sr[search_id].emplace(it->first);
+	    		//sr[search_id].emplace(it->first);
 	    	}
 	    }
 	    else
@@ -175,16 +184,50 @@ int main()
 
 	    search_id++;
 	}
-
+	/*
 	cout<< "all : " << sr[0].size() << "\n";
 	cout<< "all : " << sr[1].size() << "\n";
 	cout<< "all : " << sr[2].size() << "\n";
-
 
 	std::unordered_set<unsigned int> ggdd;
 	set_intersection(sr[0].begin(), sr[0].end(), sr[1].begin(), sr[1].end(), std::inserter(ggdd,ggdd.end()));
 
 	cout<< "after vintersection all : " << ggdd.size() << "\n";
+	*/
+
+	std::unordered_map<unsigned int, double> DocOutSet;
+	for (int i = 0; i < search_id; i++) {
+		double avgdl = 0.0;
+		unsigned int tf = 0;
+		unsigned int D_N = result_ptr[i]->DOCID.size();
+
+		for(auto it = result_ptr[i]->DOCID.begin(); it !=  result_ptr[i]->DOCID.end(); ++it) {
+			avgdl += it->second->getDoc_len();
+		}
+		avgdl = avgdl / D_N;
+
+		for(auto it = result_ptr[i]->DOCID.begin(); it !=  result_ptr[i]->DOCID.end(); ++it) {
+			tf = it->second->getFreq();
+			double di_score = BM25OneTokenScore(tf, D_N ,avgdl);
+
+			unsigned int doc_id = it->first;
+			auto find_di = DocOutSet.find(doc_id);
+    		if(find_di != DocOutSet.end()) {
+    			find_di->second += di_score;
+    		} else {
+    			DocOutSet.emplace(doc_id, di_score);
+    		}//end if
+		}
+	}//end first for
+
+	std::unordered_map<double, unsigned int> dst = flip_map(DocOutSet);
+	int dst_i = 1;
+	for (auto it = dst.begin(); it != dst.end(); ++it) {
+		if (dst_i++ > 10)
+			break;
+		string sline = string("report") + std::to_string(it->second);
+		cout << sline << " " << it->first << "\n";
+	}
 
 	return 0;
 }
