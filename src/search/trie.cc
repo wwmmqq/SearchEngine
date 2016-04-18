@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <fstream>
 
-//#define TEST_MYTRIETREE_
+#define TEST_MYTRIETREE_
 using namespace std;
 
 int NNN = 0;
@@ -14,26 +14,6 @@ typedef Node* node_ptr;
 typedef std::map<char, node_ptr> node_map;
 typedef node_map::value_type node_value;
 
-typedef struct document* doc_ptr;
-
-
-//// index_node infor
-
-struct document {
-
-	unsigned int D_ID;
-	unsigned int freq;
-	unsigned int doc_len;
-	char location = 'a';// a for title, b for content
-
-	document(unsigned int id, unsigned int myfreq, unsigned int len, char location):
-		D_ID(id), freq(myfreq), doc_len(len), location(location) {}
-	~document(){};
-	unsigned int getFreq() { return freq; }
-	unsigned int getDoc_len() { return doc_len; }
-	unsigned int getD_ID() { return D_ID; }
-	char getLocation() { return location; }
-};
 
 /////////////////////Node///////////////////////////////
 class Node {
@@ -41,9 +21,6 @@ private:
 	char chr;
 	bool isleaf;
 	node_map m_children; //use hashmap or map to save children for efficient search
-public:
-	//std::map<unsigned int, unsigned int> DOCID2;// id and freq
-	std::map<unsigned int, doc_ptr> DOCID;// id and freq
 
 public:
 	Node() { chr = ' '; isleaf = false; }
@@ -102,9 +79,9 @@ public:
 	Trie() { my_root = new Node(); };
 	~Trie();
 
-	void insertWord(std::string s, unsigned int docid = 0, unsigned int freq=0, unsigned int doc_len=0);
+	void insertWord(std::string s);
 	bool deleteWord(const std::string s);
-	node_ptr search(const std::string s);
+	bool search(const std::string s);
 	void getAllWords();
 	void printAllWords();
 
@@ -124,12 +101,6 @@ Trie::~Trie(){
 
 void Trie::deleteNode(node_ptr & current_node){
 	//cout<<"deleting ["<<current_node->content()<<"]"<<endl;
-	int len_docid = current_node->DOCID.size();
-	if( len_docid!= 0) {
-		//std::map<unsigned int, doc_ptr>::iterator it;
-		for(auto it = current_node->DOCID.begin(); it !=  current_node->DOCID.end(); ++it)
-			delete it->second;
-	}
 	delete current_node;
 }
 
@@ -172,7 +143,7 @@ void Trie::postOrderTraverse(node_ptr current_node,void (Trie::*handleNode)(node
 	}
 }
 
-void Trie::insertWord(std::string s, unsigned int docid, unsigned int freq, unsigned int doc_len){
+void Trie::insertWord(std::string s){
 	node_ptr current = my_root;
 
 	for (unsigned int i = 0; i < s.length(); ++i ){   
@@ -185,38 +156,23 @@ void Trie::insertWord(std::string s, unsigned int docid, unsigned int freq, unsi
 		}
 	}
 
-	//current->DOCID.push_back(docid);
-	auto search_map = current->DOCID.find(docid);
-	if(search_map == current->DOCID.end()) {
-		current->DOCID.emplace(docid, new document(docid, freq, doc_len));
-	} else {
-		//TODO : nothing ? is ok
-	}
-
-
 	if(current != my_root && !current->getIslef()) {
 		current->trueIsleaf();
 		addTrieWords();
 	}
 }
 
-node_ptr Trie::search(const std::string s) {
+bool Trie::search(const std::string s) {
 	node_ptr current = my_root;
 
 	for (unsigned int i = 0; i < s.length(); i++ ){
 		current = current->findChild(s[i]);
 		if ( current == NULL )
-			return nullptr;
+			return false;
 	}
 
 	bool search_result = current->getIslef();
-	// std::cout <<"sum of doc: " <<current->DOCID.size() << std::endl;
-	// for(int i = 0; i < current->DOCID.size() && i < 10; i++)
-	// 	std::cout <<"Top 10 id:  " <<current->DOCID[i] << std::endl;
-	if (search_result) {
-		return current;
-	}
-	return nullptr;
+	return search_result;
 }
 
 bool Trie::deleteWord(const std::string s){
@@ -252,10 +208,6 @@ void Trie::printAllWords(){
 }
 
 
-
-
-#ifdef TEST_MYTRIETREE_
-
 void trie_tree_test()
 {
     Trie tree;
@@ -269,7 +221,7 @@ void trie_tree_test()
     while (!infile.eof()) {
         std::getline(infile, tmp, '\n');
         //cout << tmp << endl;
-        tree.insertWord(tmp, 1, 1, 0);
+        tree.insertWord(tmp);
         raw_words_count++;
         tmp.clear();
     }
@@ -280,16 +232,70 @@ void trie_tree_test()
     while(std::cin>> myin){
         if(myin == "stop")
             break;
-        if (tree.search(myin) != nullptr)
-        	cout<< "ok" <<endl;
-        else
-        	cout << "no" <<endl;
+        cout<< tree.search(myin)<<endl;
     }
 }
+// Test program
+int test2()
+{
+	//trie_tree_test();
+	Trie	myTree3;
+	string	words3[30] = { 
+				"a", 
+				"aa", 
+				"aaa", 
+				"aaaa", 
+				"aaaaa",
+				"aaaaaa",
+				"aaaaaaa",
+				"aaaaaaaa",
+				"aaaaaaaaa",
+				"aaaaaaaaaa",
+				"aaaaaaaaaaa",
+				"aaaaaaaaaaaa",
+				"aaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" };
+	int	len3 = 30;
+
+	cout << "Test Set #3  (" << len3 << ")"
+			<< endl << endl;
+
+	for (int i=0; i<len3; i++)
+		myTree3.insertWord(words3[i]);
+
+	std::string myin;
+	while(std::cin>> myin){
+	    if(myin == "stop")
+	        break;
+	    bool s_result = myTree3.search(myin);
+	    if (!s_result) 
+	    	myTree3.insertWord(myin);
+	    cout << myTree3.getWordsCnt()<<endl;
+	}
+	return 0;
+}
+
+#ifdef TEST_MYTRIETREE_
 
 int main(int argc, char const *argv[])
 {
-	trie_tree_test();
+	test2();
 	return 0;
 }
 #endif

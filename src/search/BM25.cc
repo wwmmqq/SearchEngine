@@ -14,6 +14,16 @@ double BM25_R(int tf, int D_N, double avgdl)
 	return tf*(k1 + 1) / (k1 + k1*(1 - b + b * D_N/avgdl))
 }
 
+double BM25OneTokenScore(std::string token)
+{
+	////
+	//double wi = BM25_W(tf, D_N);
+	//double ri = BM25_R(tf, D_N, avgdl);
+
+	//return wi*ri;
+	return 0.0;
+}
+
 double score(std::string &q)
 {
 	double result = 0.0;
