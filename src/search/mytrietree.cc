@@ -5,14 +5,30 @@
 #include <algorithm>
 #include <fstream>
 
+#define TEST_MYTRIETREE_
 using namespace std;
 
 int NNN = 0;
 class Node;
-typedef Node* NodePtr;
-typedef std::map<char, NodePtr> node_map;
+typedef Node* node_ptr;
+typedef std::map<char, node_ptr> node_map;
 typedef node_map::value_type node_value;
 
+typedef struct document* doc_ptr;
+//////node 
+
+struct document {
+
+	unsigned int D_ID;
+	unsigned int freq;
+	float tfIdf;
+
+	document(unsigned int id) { D_ID = id; }
+	~document(){};
+	unsigned int getFreq() { return freq; }
+	float getTfIdf() { return tfIdf; }
+	void setTfIdf(float value) { tfIdf = value; }
+};
 
 /////////////////////Node///////////////////////////////
 class Node {
@@ -20,6 +36,8 @@ private:
 	char chr;
 	bool isleaf;
 	node_map m_children; //use hashmap or map to save children for efficient search
+public:
+	int document;
 
 public:
 	Node() { chr = ' '; isleaf = false; }
@@ -28,50 +46,51 @@ public:
 	char content() { return chr; }
 	void setContent(const char c) { chr = c; }
 	void setWordMarker() { isleaf = true; }
-	void removeWordMarker(){isleaf = false;}
+	void removeWordMarker(){ isleaf = false; }
 	bool wordMarker() { return isleaf; }
 
 	node_map children() { return m_children; }
 
-	NodePtr findChild(const char c);
-	NodePtr appendChild(char c);
+	node_ptr findChild(const char c);
+	node_ptr appendChild(char c);
 };
 
-NodePtr Node::findChild(const char c){
+
+node_ptr Node::findChild(const char c) {
+
 	node_map::const_iterator iter = m_children.find(c);
 	if(iter != m_children.end()){
 		return iter->second;
 	}
-
 	return NULL;
 }
 
-NodePtr Node::appendChild(const char c)
-{
-	NodePtr child = new Node();
+node_ptr Node::appendChild(const char c) {
+
+	node_ptr child = new Node();
 	NNN++;
 	child->setContent(c);
-	m_children.insert(node_value(c,child)); 
+	m_children.insert(node_value(c, child)); 
 	return child;
 }
 
 
 /////////////////// trie///////////////////////////////////////
 class Trie {
-public:
+private:
+	node_ptr my_root;
+
 	unsigned int trie_words = 0;
 	unsigned int trie_height = 0;
 	unsigned int trie_nodes = 0;
-private:
-	NodePtr my_root;
 
 	std::vector<std::string> m_all_words;//TODO: when would you clear this vector?
 	std::string m_tmp_string;
 
-	void deleteNode(NodePtr & current_node);
-	void saveWord(NodePtr & current_node);//TODO: use a functor here to avoid m_all_words?
-	void preOrderTraverse(const NodePtr my_root,void (Trie::*handleNode)(NodePtr & current_node));
-	void postOrderTraverse(const NodePtr my_root,void (Trie::*handleNode)(NodePtr & current_node));
+	void deleteNode(node_ptr & current_node);
+	void saveWord(node_ptr & current_node);//TODO: use a functor here to avoid m_all_words?
+	void preOrderTraverse(const node_ptr my_root,void (Trie::*handleNode)(node_ptr & current_node));
+	void postOrderTraverse(const node_ptr my_root,void (Trie::*handleNode)(node_ptr & current_node));
 
 public:
 	Trie() { my_root = new Node(); };
@@ -80,20 +99,29 @@ public:
 	void addWord(std::string s);
 	bool deleteWord(const std::string s);
 	bool search(const std::string s);
-	void getAllWords(); 
+	void getAllWords();
 	void printAllWords();
+
+	unsigned int getWordsCnt() { return trie_words; }
+	unsigned int getTrieHeight() { return trie_height; }
+	unsigned int getTrieNodeCnt() { return trie_nodes; }
+
+	void addTrieWords() { trie_words++; }
+	void addTrieNode() { trie_nodes++; }
+	void setTrieHeight(unsigned int height) { trie_height = height;}
+	
 };
 
 Trie::~Trie(){
 	postOrderTraverse(my_root, &Trie::deleteNode);
 }
 
-void Trie::deleteNode(NodePtr & current_node){
+void Trie::deleteNode(node_ptr & current_node){
 	//cout<<"deleting ["<<current_node->content()<<"]"<<endl;
 	delete current_node;
 }
 
-void Trie::saveWord(NodePtr & current_node){
+void Trie::saveWord(node_ptr & current_node){
 	//only suitable for preorder
 	m_tmp_string += current_node->content();
 
@@ -108,7 +136,7 @@ void Trie::saveWord(NodePtr & current_node){
 
 }
 
-void Trie::preOrderTraverse(NodePtr current_node,void (Trie::*handleNode)(NodePtr & current_node)){
+void Trie::preOrderTraverse(node_ptr current_node,void (Trie::*handleNode)(node_ptr & current_node)){
 	if(!current_node) return;
 
 	node_map current_children = current_node->children();
@@ -120,7 +148,7 @@ void Trie::preOrderTraverse(NodePtr current_node,void (Trie::*handleNode)(NodePt
 	}
 }
 
-void Trie::postOrderTraverse(NodePtr current_node,void (Trie::*handleNode)(NodePtr & current_node)){
+void Trie::postOrderTraverse(node_ptr current_node,void (Trie::*handleNode)(node_ptr & current_node)){
 	if(!current_node) return;
 
 	node_map current_children = current_node->children();
@@ -133,35 +161,38 @@ void Trie::postOrderTraverse(NodePtr current_node,void (Trie::*handleNode)(NodeP
 }
 
 void Trie::addWord(std::string s){
-	NodePtr current = my_root;
+	node_ptr current = my_root;
 
 	for (unsigned int i = 0; i < s.length(); ++i ){   
-		NodePtr child = current->findChild(s[i]);
-		if ( child == NULL )
+		node_ptr child = current->findChild(s[i]);
+		if ( child == NULL ) {
 			current = current->appendChild(s[i]);
-		else
+			addTrieNode();
+		} else {
 			current = child;
+		}
 	}
 
 	if(current != my_root) {
 		current->setWordMarker();
-		this->trie_words++;
+		addTrieWords();
 	}
 }
 
 bool Trie::search(const std::string s) {
-	NodePtr current = my_root;
+	node_ptr current = my_root;
 
 	for (unsigned int i = 0; i < s.length(); i++ ){
 		current = current->findChild(s[i]);
-		if ( current == NULL )return false;
+		if ( current == NULL )
+			return false;
 	}
 
 	return current->wordMarker();
 }
 
 bool Trie::deleteWord(const std::string s){
-	NodePtr current_node = my_root;
+	node_ptr current_node = my_root;
 
 	for (unsigned int i = 0; i < s.length(); i++ ){
 		current_node = current_node->findChild(s[i]);
@@ -191,6 +222,7 @@ void Trie::printAllWords(){
 	for(unsigned int i=0;i<m_all_words.size();++i)
 		std::cout<<"["<< m_all_words.at(i) <<"]"<<std::endl;
 }
+
 
 void trie_tree_test()
 {
@@ -267,7 +299,10 @@ int test2()
 	while(std::cin>> myin){
 	    if(myin == "stop")
 	        break;
-	    cout<< myTree3.search(myin)<<endl;
+	    bool s_result = myTree3.search(myin);
+	    if (!s_result) 
+	    	myTree3.addWord(myin);
+	    cout << myTree3.getWordsCnt()<<endl;
 	}
 	return 0;
 }
@@ -276,7 +311,7 @@ int test2()
 
 int main(int argc, char const *argv[])
 {
-	
+	test2();
 	return 0;
 }
 #endif
