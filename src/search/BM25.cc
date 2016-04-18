@@ -12,4 +12,3 @@ double BM25OneTokenScore(unsigned tf, unsigned int D_N, double avgdl)
 	score = wi * ri;
 	return score;
 }
-

@@ -53,20 +53,7 @@ void token2()
 	   }
 }
 
-void query_token_all(const std::string & mystr)
-{
-    std::istringstream iss(mystr);
 
-    do {
-        string sub;
-        iss >> sub;
-        if (sub.size() != 0) {
-        	if (!find_stop_words(sub)){
-        		cout<< sub <<endl;
-        	}
-        }
-    } while (iss);
-}
 
 void queries(vector<string> &Q)
 {

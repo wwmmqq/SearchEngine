@@ -1,4 +1,7 @@
-#include <unordered_map>
+#include <map>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 template<typename A, typename B>
 std::pair<B,A> flip_pair(const std::pair<A,B> &p)
@@ -7,9 +10,9 @@ std::pair<B,A> flip_pair(const std::pair<A,B> &p)
 }
 
 template<typename A, typename B>
-std::unordered_map<B,A> flip_map(const std::unordered_map<A,B> &src)
+std::map<B,A> flip_map(const std::map<A,B> &src)
 {
-    std::unordered_map<B,A> dst;
+    std::map<B,A> dst;
     std::transform(src.begin(), src.end(), std::inserter(dst, dst.begin()), 
                    flip_pair<A,B>);
     return dst;

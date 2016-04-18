@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <unordered_set>
 #include <unordered_map>
+#include <map>
 #include <algorithm>
 #include <ctime>
 
@@ -12,10 +13,11 @@
 #include "mytrietree.cc"
 #include "BM25.cc"
 
-
+using std::vector;
 using std::string; using std::endl; using std::cout;
 
 std::unordered_set<string> STOPWRODS;
+vector<vector<string> > QQ;
 //std::unordered_set<unsigned int> SearchResultSet;
 //std::unordered_set<string> Dict;
 unsigned int token_nu = 0;
@@ -113,12 +115,52 @@ void documentToken(const unsigned int docid, const std::string & mystr, Trie& my
     //cout << "current word is : " <<myTree.getWordsCnt() <<endl;
 }
 
+void queryTokenAll(string & filename)
+{
+	vector<string> tempv;
+	std::ifstream in(filename);
+	string line;
+	while(std::getline(in, line)) {
+		std::istringstream iss(line);
+		do {
+	        string sub;
+	        iss >> sub;
+	        if (sub.size() != 0) {
+	        	if (!find_stop_words(sub)){
+	        		//cout<< sub <<endl;
+	        		tempv.push_back(sub);
+	        	}
+	        }
+    	} while (iss);
+    	QQ.push_back(tempv);
+	}
+}
+
+
+int test()
+{
+	string query_path = "0601_2011.txt";
+	queryTokenAll(query_path);
+
+	for(int qi = 0; qi < QQ.size(); qi++)
+	{
+		int search_id = 0;
+		std::string myin;
+		for(int qii = 0; qii < QQ[qi].size(); qii++) {
+			myin = QQ[qi][qii];
+			cout << myin << "\n";
+		}
+	}
+	return 0;
+}
+
 int main()
 {
 	//add_stop_words_by_rule(); return 0;
 	Trie myTree;
 
 	std::string data_path = "/home/wmq/Desktop/SearchEngine/data/processed";
+	string query_path = "/home/wmq/Desktop/SearchEngine/src/search/0601_2011.txt";
 
 	load_stop_words();
 
@@ -145,7 +187,7 @@ int main()
 	}
 	std::clock_t c_end1 = std::clock();
 	cout<<"CPU time used(索引建立时间): "
-            << 1000.0*1000.0 * (c_end1-c_start1) / CLOCKS_PER_SEC << " s\n";
+            << (c_end1-c_start1) / CLOCKS_PER_SEC << " s\n";
 
 	//cout << "\n Dict total word is : " <<  Dict.size() << endl;// total word is : 48932
 	cout << "\n Trie total word is : " <<myTree.getWordsCnt() <<endl;
@@ -160,98 +202,114 @@ int main()
 	sr[1] = SearchResultSet2;
 	sr[2] = SearchResultSet3;
 	*/
-
+//////////////////////////////////inded build end ///////////////////////////////////////////////
+	
 	node_ptr result_ptr[10];
 
-	std::string myin;
 	int search_id = 0;
-	while(std::cin >> myin) {
-	    if(myin == "stop")
-	        break;
 
-	    node_ptr search_p = myTree.search(myin);
-	    result_ptr[search_id] = search_p;
+	
+	queryTokenAll(query_path);
+	cout << "QQ size: " << QQ.size() << endl;
+	double toatal_query_time = 0.0;
+	for(int qi = 0; qi < QQ.size(); qi++)
+	{
+		std::clock_t c_start2 = std::clock();
+		search_id = 0;
+		std::string myin;
 
-	    if (search_p != nullptr) {
-	    	cout<< "ok" <<endl;
+		for(int qii = 0; qii < QQ[qi].size(); qii++) {
+			myin = QQ[qi][qii];
+		    node_ptr search_p = myTree.search(myin);
+		    result_ptr[search_id] = search_p;
 
-	    	std::cout <<"sum of doc: " <<search_p->DOCID.size() << std::endl;
+		    if (search_p != nullptr) {
+		    	cout<< "ok" <<endl;
 
-	    	int i = 0;
-	    	for(auto it = search_p->DOCID.begin(); it !=  search_p->DOCID.end(); ++it) {
-	    		if(i++ < 10)
-	    			cout<<"Top 10 id: "<< i<<" " << myin << " in : "<< it->first 
-	    					<< " freq: " << it->second->getFreq()
-	    					<< " doc_len: " << it->second->getDoc_len() << "\n";
-	    		//sr[search_id].emplace(it->first);
-	    	}
-	    }
-	    else
-	    	cout << "no" <<endl;
-
-	    search_id++;
-	}
-	/*
-	cout<< "all : " << sr[0].size() << "\n";
-	cout<< "all : " << sr[1].size() << "\n";
-	cout<< "all : " << sr[2].size() << "\n";
-
-	std::unordered_set<unsigned int> ggdd;
-	set_intersection(sr[0].begin(), sr[0].end(), sr[1].begin(), sr[1].end(), std::inserter(ggdd,ggdd.end()));
-
-	cout<< "after vintersection all : " << ggdd.size() << "\n";
-	*/
-
-	std::unordered_map<unsigned int, double> DocOutSet;
-	for (int i = 0; i < search_id; i++) {
-		double avgdl = 0.0;
-		unsigned int tf = 0;
-		unsigned int D_N = result_ptr[i]->DOCID.size();
-
-		for(auto it = result_ptr[i]->DOCID.begin(); it !=  result_ptr[i]->DOCID.end(); ++it) {
-			avgdl += it->second->getDoc_len();
+		    	std::cout <<"sum of doc: " <<search_p->DOCID.size() << std::endl;
+		    	/*
+		    	int i = 0;
+		    	for(auto it = search_p->DOCID.begin(); it !=  search_p->DOCID.end(); ++it) {
+		    		if(i++ < 10)
+		    			cout<<"Top 10 id: "<< i<<" " << myin << " in : "<< it->first 
+		    					<< " freq: " << it->second->getFreq()
+		    					<< " doc_len: " << it->second->getDoc_len() << "\n";
+		    		//sr[search_id].emplace(it->first);
+		    	}*/
+		    }
+		    else {
+		    	cout << "no" <<endl;
+		    	continue;
+		    }
+		    search_id++;
 		}
-		avgdl = avgdl / D_N;
 
-		for(auto it = result_ptr[i]->DOCID.begin(); it !=  result_ptr[i]->DOCID.end(); ++it) {
-			tf = it->second->getFreq();
-			double di_score = BM25OneTokenScore(tf, D_N ,avgdl);
+		std::map<unsigned int, double> DocOutSet;
+		for (int i = 0; i < search_id; i++) {
 
-			unsigned int doc_id = it->first;
-			auto find_di = DocOutSet.find(doc_id);
-    		if(find_di != DocOutSet.end()) {
-    			find_di->second += di_score;
-    		} else {
-    			DocOutSet.emplace(doc_id, di_score);
-    		}//end if
+			if(result_ptr[i] == nullptr)
+				continue;
+
+			double avgdl = 0.0;
+			unsigned int tf = 0;
+			unsigned int D_N = result_ptr[i]->DOCID.size();
+
+			for(auto it = result_ptr[i]->DOCID.begin(); it !=  result_ptr[i]->DOCID.end(); ++it) {
+				avgdl += it->second->getDoc_len();
+			}
+			avgdl = avgdl / D_N;
+
+			for(auto it = result_ptr[i]->DOCID.begin(); it !=  result_ptr[i]->DOCID.end(); ++it) {
+				tf = it->second->getFreq();
+				double di_score = BM25OneTokenScore(tf, D_N ,avgdl);
+
+				unsigned int doc_id = it->first;
+				auto find_di = DocOutSet.find(doc_id);
+	    		if(find_di != DocOutSet.end()) {
+	    			find_di->second += di_score;
+	    		} else {
+	    			DocOutSet.emplace(doc_id, di_score);
+	    		}//end if
+			}
+		}//end first for
+
+		std::map<double, unsigned int> dst = flip_map(DocOutSet);
+		int dst_i = 1;
+
+		/*
+		for (auto it = dst.begin(); it != dst.end(); ++it) {
+			if (dst_i++ > 10)
+				break;
+			string sline = string("report") + std::to_string(it->second);
+			cout << sline << " " << it->first << "\n";
+		}*/
+		for (auto it = dst.rbegin(); it != dst.rend(); ++it) {
+			if (dst_i++ > 10)
+				break;
+			string sline = string("report") + std::to_string(it->second);
+			cout << sline << " " << it->first << "\n";
 		}
-	}//end first for
 
-	std::unordered_map<double, unsigned int> dst = flip_map(DocOutSet);
-	int dst_i = 1;
-	for (auto it = dst.begin(); it != dst.end(); ++it) {
-		if (dst_i++ > 10)
-			break;
-		string sline = string("report") + std::to_string(it->second);
-		cout << sline << " " << it->first << "\n";
+		std::clock_t c_end2 = std::clock();
+		double cost_time2 = c_end2-c_start2;
+		toatal_query_time += cost_time2;
+		cout<<"CPU time used:(检索时间): "
+	            << cost_time2 << " clock\n";
 	}
 
-	std::clock_t c_start2 = std::clock();
-	std::clock_t c_end2 = std::clock();
-	cout<<"CPU time used:(检索时间): "
-            << 1000.0*1000.0 * (c_end2-c_start2) / CLOCKS_PER_SEC << " s\n"
+	cout<<"CPU time used:(30 query 检索时间): "
+	            << toatal_query_time/CLOCKS_PER_SEC << " s\n";
 	return 0;
 }
 
 /******** base line**********
 预处理时间:4014s
 预处理后数据集大小:147MB (原来298MB)
-索引建立时间:519s
+索引建立时间:519s ..................mytime: CPU time used(索引建立时间): 44 s
 索引文件大小:143MB
 检索时间:
 	共:441s
 	平均:12.6s
-
 P@10:0.3911
 Map:0.3240
 ****************************/
