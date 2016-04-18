@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <algorithm>
+#include <ctime>
 
 #include "base_function.cc"
 #include "mytrietree.cc"
@@ -126,6 +127,9 @@ int main()
 	else
 		return -1;
 
+
+    std::clock_t c_start1 = std::clock();
+
 	for (unsigned int text_id = 0; text_id <= 101710; text_id++) {
 
 		std::string filename = std::string("report") + std::to_string(text_id) + std::string(".txt");
@@ -139,6 +143,9 @@ int main()
     	//int ok;
    		//std::cin>>ok;
 	}
+	std::clock_t c_end1 = std::clock();
+	cout<<"CPU time used(索引建立时间): "
+            << 1000.0*1000.0 * (c_end1-c_start1) / CLOCKS_PER_SEC << " s\n";
 
 	//cout << "\n Dict total word is : " <<  Dict.size() << endl;// total word is : 48932
 	cout << "\n Trie total word is : " <<myTree.getWordsCnt() <<endl;
@@ -229,5 +236,22 @@ int main()
 		cout << sline << " " << it->first << "\n";
 	}
 
+	std::clock_t c_start2 = std::clock();
+	std::clock_t c_end2 = std::clock();
+	cout<<"CPU time used:(检索时间): "
+            << 1000.0*1000.0 * (c_end2-c_start2) / CLOCKS_PER_SEC << " s\n"
 	return 0;
 }
+
+/******** base line**********
+预处理时间:4014s
+预处理后数据集大小:147MB (原来298MB)
+索引建立时间:519s
+索引文件大小:143MB
+检索时间:
+	共:441s
+	平均:12.6s
+
+P@10:0.3911
+Map:0.3240
+****************************/
