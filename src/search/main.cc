@@ -22,6 +22,18 @@ vector<vector<string> > QQ;
 //std::unordered_set<string> Dict;
 unsigned int token_nu = 0;
 
+void outPutSearchResult(const string &filename, const std::map<double, unsigned int> &dst, const int pi) {
+	std::ofstream outfile;
+	outfile.open(filename, std::ofstream::out | std::ofstream::app);
+
+	for (auto it = dst.rbegin(); it != dst.rend(); ++it) {
+		string line =  string("report") + std::to_string(it->second);
+
+		line = std::to_string(pi) + " " + std::to_string(it->first) + line;
+		outfile << line << "\n";
+	}
+	outfile.close();
+}
 
 void add_stop_words_by_rule() {
 	std::ofstream outfile;
@@ -139,7 +151,7 @@ void queryTokenAll(string & filename)
 
 int test()
 {
-	string query_path = "0601_2011.txt";
+	string query_path = "../query.txt";
 	queryTokenAll(query_path);
 
 	for(int qi = 0; qi < QQ.size(); qi++)
