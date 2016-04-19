@@ -16,7 +16,6 @@ typedef node_map::value_type node_value;
 
 typedef struct document* doc_ptr;
 
-
 //// index_node infor
 
 struct document {
