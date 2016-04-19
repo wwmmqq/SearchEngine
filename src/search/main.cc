@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <map>
+#include <queue>
 #include <algorithm>
 #include <ctime>
 
@@ -22,15 +23,52 @@ vector<vector<string> > QQ;
 //std::unordered_set<string> Dict;
 unsigned int token_nu = 0;
 
-void outPutSearchResult(const string &filename, const std::map<double, unsigned int> &dst, const int pi) {
+struct IdScore {
+	unsigned int id;
+	double score;
+
+	IdScore(unsigned int id, double score):id(id),score(score){}
+
+	bool operator < (const IdScore& a) const {
+		return a.score < score;
+	}
+};
+
+
+void outPutSearchResult(const string &filename, const std::multimap<double, unsigned int> &dst, const int pi) {
 	std::ofstream outfile;
 	outfile.open(filename, std::ofstream::out | std::ofstream::app);
 
+	int cnt = 0;
 	for (auto it = dst.rbegin(); it != dst.rend(); ++it) {
-		string line =  string("report") + std::to_string(it->second);
+		for(auto it2 = it; it->first == it2->first; ++it2) {
+			string line =  std::to_string(pi) + " " + std::to_string(it2->first) + " ";
+			line += string("report") + std::to_string(it2->second);
+			outfile << line << "\n";
+			cnt++;
+			if(cnt > 10)
+				break;
+		}
+		if(cnt > 10)
+				break;
+	}
+	outfile.close();
+}
 
-		line = std::to_string(pi) + " " + std::to_string(it->first) + line;
+
+void outPutSearchResult2(const string &filename, const std::vector<IdScore> &dst, const int pi) {
+	std::ofstream outfile;
+	outfile.open(filename, std::ofstream::out | std::ofstream::app);
+
+	int cnt = 0;
+	for (auto it = dst.begin(); it != dst.end(); ++it) {
+		if(cnt > 100)
+			break;
+		
+		string line =  std::to_string(pi) + " " + std::to_string(it->score) + " ";
+		line += string("report") + std::to_string(it->id);
 		outfile << line << "\n";
+		cnt++;
 	}
 	outfile.close();
 }
@@ -119,7 +157,7 @@ void documentToken(const unsigned int docid, const std::string & mystr, Trie& my
 
     for (const auto &p : Document) {
     	//std::cout << p.first << " : " << p.second << "\n";
-    	myTree.insertWord(p.first, docid, p.second, text_token_len);
+    	myTree.insertWord(p.first, docid, p.second, 'b', text_token_len);
     	//Dict.emplace(p.first);
     }
 
@@ -133,12 +171,13 @@ void queryTokenAll(string & filename)
 	std::ifstream in(filename);
 	string line;
 	while(std::getline(in, line)) {
+		tempv.clear();
 		std::istringstream iss(line);
 		do {
 	        string sub;
 	        iss >> sub;
 	        if (sub.size() != 0) {
-	        	if (!find_stop_words(sub)){
+	        	if (!find_stop_words(sub)) {
 	        		//cout<< sub <<endl;
 	        		tempv.push_back(sub);
 	        	}
@@ -151,29 +190,32 @@ void queryTokenAll(string & filename)
 
 int test()
 {
-	string query_path = "../query.txt";
+	string query_path = "/home/wmq/Desktop/SearchEngine/src/query0601_2011.txt";
 	queryTokenAll(query_path);
+	cout << "QQ size: " << QQ.size() << endl;
 
 	for(int qi = 0; qi < QQ.size(); qi++)
 	{
-		int search_id = 0;
 		std::string myin;
 		for(int qii = 0; qii < QQ[qi].size(); qii++) {
 			myin = QQ[qi][qii];
-			cout << myin << "\n";
+			cout << myin <<"**";
 		}
+		cout << endl;
 	}
 	return 0;
 }
 
 int main()
 {
+	//test();
+	//return 0;
 	//add_stop_words_by_rule(); return 0;
 	Trie myTree;
 
 	std::string data_path = "/home/wmq/Desktop/SearchEngine/data/processed";
-	string query_path = "/home/wmq/Desktop/SearchEngine/src/search/0601_2011.txt";
-
+	string query_path = "/home/wmq/Desktop/SearchEngine/src/query0601_2011.txt";
+	string result_file = "/home/wmq/Desktop/SearchEngine/src/QQ2.txt";
 	load_stop_words();
 
 	if (chDir(data_path))
@@ -181,6 +223,8 @@ int main()
 	else
 		return -1;
 
+	std::map<unsigned int, double> DocOutMap;
+	//std::multimap<double, unsigned int> dst;
 
     std::clock_t c_start1 = std::clock();
 
@@ -216,112 +260,116 @@ int main()
 	*/
 //////////////////////////////////inded build end ///////////////////////////////////////////////
 	
-	node_ptr result_ptr[10];
+	std::vector<node_ptr> result_ptr_v;
 
-	int search_id = 0;
 
-	
 	queryTokenAll(query_path);
 	cout << "QQ size: " << QQ.size() << endl;
+
 	double toatal_query_time = 0.0;
 	for(int qi = 0; qi < QQ.size(); qi++)
-	{
-		std::clock_t c_start2 = std::clock();
-		search_id = 0;
+	{	
+		std::vector<IdScore> result_Q;
+		cout << "*****************" << qi+1 <<"*****************" <<"\n";
+		DocOutMap.clear();
+		//dst.clear();
+		result_ptr_v.clear();
 		std::string myin;
 
+		std::clock_t c_start2 = std::clock();
 		for(int qii = 0; qii < QQ[qi].size(); qii++) {
 			myin = QQ[qi][qii];
 		    node_ptr search_p = myTree.search(myin);
-		    result_ptr[search_id] = search_p;
 
 		    if (search_p != nullptr) {
-		    	cout<< "ok" <<endl;
-
-		    	std::cout <<"sum of doc: " <<search_p->DOCID.size() << std::endl;
-		    	/*
-		    	int i = 0;
-		    	for(auto it = search_p->DOCID.begin(); it !=  search_p->DOCID.end(); ++it) {
-		    		if(i++ < 10)
-		    			cout<<"Top 10 id: "<< i<<" " << myin << " in : "<< it->first 
-		    					<< " freq: " << it->second->getFreq()
-		    					<< " doc_len: " << it->second->getDoc_len() << "\n";
-		    		//sr[search_id].emplace(it->first);
-		    	}*/
-		    }
-		    else {
-		    	cout << "no" <<endl;
+		    	result_ptr_v.push_back(search_p);
+		    	//cout<< "ok" <<endl;
+		    	std::cout <<"doc about "<<myin<<" : "<< search_p->DOCID.size() << std::endl;
+		    } else {
+		    	cout << "no searched: " << myin <<"\n";
 		    	continue;
 		    }
-		    search_id++;
 		}
-
-		std::map<unsigned int, double> DocOutSet;
-		for (int i = 0; i < search_id; i++) {
-
-			if(result_ptr[i] == nullptr)
+		
+		for (int i = 0; i != result_ptr_v.size(); i++) {
+			if(result_ptr_v[i] == nullptr)
 				continue;
 
 			double avgdl = 0.0;
 			unsigned int tf = 0;
-			unsigned int D_N = result_ptr[i]->DOCID.size();
+			unsigned int D_N = result_ptr_v[i]->DOCID.size();
 
-			for(auto it = result_ptr[i]->DOCID.begin(); it !=  result_ptr[i]->DOCID.end(); ++it) {
+			for(auto it = result_ptr_v[i]->DOCID.begin(); it !=  result_ptr_v[i]->DOCID.end(); ++it) {
 				avgdl += it->second->getDoc_len();
 			}
 			avgdl = avgdl / D_N;
 
-			for(auto it = result_ptr[i]->DOCID.begin(); it !=  result_ptr[i]->DOCID.end(); ++it) {
+			for(auto it = result_ptr_v[i]->DOCID.begin(); it != result_ptr_v[i]->DOCID.end(); ++it) {
 				tf = it->second->getFreq();
 				double di_score = BM25OneTokenScore(tf, D_N ,avgdl);
 
 				unsigned int doc_id = it->first;
-				auto find_di = DocOutSet.find(doc_id);
-	    		if(find_di != DocOutSet.end()) {
+				auto find_di = DocOutMap.find(doc_id);
+	    		if(find_di != DocOutMap.end()) {
 	    			find_di->second += di_score;
 	    		} else {
-	    			DocOutSet.emplace(doc_id, di_score);
+	    			DocOutMap.emplace(doc_id, di_score);
 	    		}//end if
 			}
 		}//end first for
+		
 
-		std::map<double, unsigned int> dst = flip_map(DocOutSet);
-		int dst_i = 1;
+		for (auto it = DocOutMap.begin(); it!=DocOutMap.end(); ++it) {
+			//dst.emplace(it->second, it->first);
+			result_Q.push_back(IdScore(it->first, it->second));
+		}
+		std::sort(result_Q.begin(), result_Q.end());
+		//dst = flip_map(DocOutMap);
 
+		//cout << "6666: " << DocOutMap.size() << "\n";
 		/*
-		for (auto it = dst.begin(); it != dst.end(); ++it) {
-			if (dst_i++ > 10)
-				break;
-			string sline = string("report") + std::to_string(it->second);
-			cout << sline << " " << it->first << "\n";
-		}*/
+		int dst_i = 1;
 		for (auto it = dst.rbegin(); it != dst.rend(); ++it) {
 			if (dst_i++ > 10)
 				break;
 			string sline = string("report") + std::to_string(it->second);
 			cout << sline << " " << it->first << "\n";
-		}
+		}*/
 
 		std::clock_t c_end2 = std::clock();
 		double cost_time2 = c_end2-c_start2;
 		toatal_query_time += cost_time2;
+
+		//outPutSearchResult(result_file, dst, qi+101);
+		outPutSearchResult2(result_file, result_Q, qi+101);
 		cout<<"CPU time used:(检索时间): "
-	            << cost_time2 << " clock\n";
+	            << cost_time2/CLOCKS_PER_SEC << " clock\n";
 	}
 
 	cout<<"CPU time used:(30 query 检索时间): "
 	            << toatal_query_time/CLOCKS_PER_SEC << " s\n";
+	cout<<"CPU time used:(平均检索时间): "
+	            << toatal_query_time/CLOCKS_PER_SEC/35.0 << " s\n";                
 	return 0;
 }
 
 /******** base line**********
 预处理时间:4014s
 预处理后数据集大小:147MB (原来298MB)
-索引建立时间:519s ..................mytime: CPU time used(索引建立时间): 44 s
+索引建立时间:519s
 索引文件大小:143MB
 检索时间:
 	共:441s
 	平均:12.6s
 P@10:0.3911
 Map:0.3240
+
+***************my : 
+预处理时间:
+预处理后数据集大小:147MB (原来298MB)
+索引建立时间: 44 s
+索引文件大小: 
+检索时间(35 query):
+	共:3.86062 s
+	平均:0.110303 s
 ****************************/

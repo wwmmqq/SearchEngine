@@ -102,7 +102,7 @@ public:
 	Trie() { my_root = new Node(); };
 	~Trie();
 
-	void insertWord(std::string s, unsigned int docid = 0, unsigned int freq=0, unsigned int doc_len=0);
+	void insertWord(std::string s, unsigned int docid = 0, unsigned int freq=0, char location='b', unsigned int doc_len=0);
 	bool deleteWord(const std::string s);
 	node_ptr search(const std::string s);
 	void getAllWords();
@@ -172,7 +172,7 @@ void Trie::postOrderTraverse(node_ptr current_node,void (Trie::*handleNode)(node
 	}
 }
 
-void Trie::insertWord(std::string s, unsigned int docid, unsigned int freq, unsigned int doc_len){
+void Trie::insertWord(std::string s, unsigned int docid, unsigned int freq, char location, unsigned int doc_len){
 	node_ptr current = my_root;
 
 	for (unsigned int i = 0; i < s.length(); ++i ){   
@@ -264,12 +264,13 @@ void trie_tree_test()
     if(!infile) {
         std::cout << "File opening failed\n";
     }
+    
     unsigned int raw_words_count = 0;
     std::string tmp;
     while (!infile.eof()) {
         std::getline(infile, tmp, '\n');
         //cout << tmp << endl;
-        tree.insertWord(tmp, 1, 1, 0);
+        tree.insertWord(tmp, 1, 1, 'b',0);
         raw_words_count++;
         tmp.clear();
     }

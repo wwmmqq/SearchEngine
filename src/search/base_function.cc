@@ -10,9 +10,9 @@ std::pair<B,A> flip_pair(const std::pair<A,B> &p)
 }
 
 template<typename A, typename B>
-std::map<B,A> flip_map(const std::map<A,B> &src)
+std::multimap<B,A> flip_map(const std::map<A,B> &src)
 {
-    std::map<B,A> dst;
+    std::multimap<B,A> dst;
     std::transform(src.begin(), src.end(), std::inserter(dst, dst.begin()), 
                    flip_pair<A,B>);
     return dst;
