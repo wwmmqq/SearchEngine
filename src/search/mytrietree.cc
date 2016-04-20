@@ -79,7 +79,6 @@ node_ptr Node::appendChild(const char c) {
 	return child;
 }
 
-
 /////////////////// trie///////////////////////////////////////
 class Trie {
 private:
