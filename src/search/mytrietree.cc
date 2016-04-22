@@ -16,6 +16,7 @@ typedef node_map::value_type node_value;
 
 typedef struct document* doc_ptr;
 
+
 //// index_node infor
 
 struct document {
@@ -78,6 +79,7 @@ node_ptr Node::appendChild(const char c) {
 	m_children.insert(node_value(c, child)); 
 	return child;
 }
+
 
 /////////////////// trie///////////////////////////////////////
 class Trie {

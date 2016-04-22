@@ -2,7 +2,8 @@
 
 
 def readStandard(filename='../11qrels_visit_checksum.txt'):
-	'''
+	'''eg:
+	101 0 +C3SPIppTQGH 0 20070207ER-lVmKQtn/ZWN3-832-62458567 report1545
 	'''
 	standard = set([])
 	with open(filename) as f:
@@ -14,7 +15,8 @@ def readStandard(filename='../11qrels_visit_checksum.txt'):
 	return standard
 
 def readMyResult(filename='../QQ.txt'):
-	'''
+	'''eg:
+		101 2.154329 report22976
 	'''
 	result = []
 	with open(filename) as f:
@@ -27,7 +29,7 @@ def readMyResult(filename='../QQ.txt'):
 
 def IRMap(N=11, Q=35):
 	standard = readStandard()
-	myresult = readMyResult()
+	myresult = readMyResult('../QQ1000.txt')
 
 	SC = []
 
@@ -53,10 +55,14 @@ def IRMap(N=11, Q=35):
 		SC.append(score)
 		qi = qi + 1;
 
-	print sum(SC)/len(SC)
+	zerocnt = 0
+	for x in SC:
+		if x == 0:
+			zerocnt += 1
+	print sum(SC)/(len(SC)-zerocnt)
 
 def main():
-	IRMap()
+	IRMap(N=1000, Q=35)
 
 
 if __name__ == '__main__':

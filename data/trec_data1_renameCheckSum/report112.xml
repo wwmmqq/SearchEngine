@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='utf-8'?>
+<report>
+<checksum>report112</checksum>
+<subtype>NEUROSURG OP</subtype>
+<type>OP</type>
+<chief_complaint>TRIGEMINAL NEURALGIA</chief_complaint>
+<admit_diagnosis>350.1</admit_diagnosis>
+<discharge_diagnosis>350.1,V10.3,401.9,733.00,272.0,426.3,785.2,</discharge_diagnosis>
+<year>2007</year>
+<downlaod_time>2009-10-05</downlaod_time>
+<update_time />
+<deid>v.6.22.08.0</deid>
+<report_text>[Report de-identified (Safe-harbor compliant) by De-ID v.6.22.08.0]
+
+
+ 
+**INSTITUTION
+NEUROSURGERY
+OPERATIVE REPORT
+PATIENT NAME:  **NAME[AAA, BBB M]
+ACCOUNT #:  **ID-NUM
+**ROOM
+SURGEON:  **NAME[VVV M. WWW], M.D.
+ASSISTANT(S):  
+ATTENDING PHYSICIAN:  **NAME[YYY XXX ZZZ]
+SURGERY DATE:  **DATE[Sep 03 06]
+ADMISSION DATE:  **DATE[Sep 03 2007]
+DISCHARGE DATE:  
+PREOPERATIVE DIAGNOSIS:  LEFT TRIGEMINAL NEURALGIA.
+POSTOPERATIVE DIAGNOSIS:  LEFT TRIGEMINAL NEURALGIA.
+PROCEDURE:  LEFT RETROMASTOID CRANIOTOMY; MICROVASCULAR DECOMPRESSION LEFT 
+FIFTH NERVE; BOVINE DURAPLASTY; TITANIUM PLATE CRANIOPLASTY. 
+STAFF:  **NAME[VVV M. WWW], M.D., and Dr. **NAME[ZZZ].
+RESIDENT:  **NAME[VVV UUU], M.D.
+ANESTHESIA:  General endotracheal anesthesia.
+COMPLICATIONS:  None.
+SPECIMENS:  None.
+INTRAOPERATIVE MONITORING:  Brainstem auditory evoked responses with 
+somatosensory evoked potentials. 
+INDICATIONS FOR OPERATION:  The patient is a **AGE[in 60s]-year-old woman with typical 
+trigeminal neuralgia.  The patient has opted for microvascular decompression. 
+ Options for less invasive therapies including radiosurgery and percutaneous 
+procedures risks were discussed.  Consent was given.  Risks of stroke, death, 
+failure, hearing loss, facial paralysis, facial numbness, double vision, 
+infection, and spinal fluid leak were discussed. 
+DESCRIPTION OF OPERATION:  The patient was identified and brought to the 
+operating room.  She was placed under general anesthesia.  Her head was put 
+in the Mayfield-Kees headholder, and she was put in the lateral decubitus 
+position with her left side up.  All pressures points were padded, and she 
+was taped to the table.  Neurophysiological monitoring lines were placed.  
+The left retromastoid region was shaved, prepped, and draped in the usual 
+sterile fashion.  A 5-cm linear incision was made just behind the hairline.  
+Self-retaining retractors were placed, and a subperiosteal dissection was 
+carried out.  **NAME[TTT SSS] drill was used to perform retromastoid craniotomy 
+such that the edges of the transverse and sigmoid sinuses were exposed.  Air 
+cells were waxed, and the wound was copiously irrigated with antibiotic 
+saline.  The dura was now opened in a curvilineal fashion and reflected 
+laterally using four Nurolon tack-up sutures.  The microscope was brought in. 
+Using microsurgical dissection techniques, the eleventh nerve cistern was 
+identified.  The arachnoid was opened and CSF came forth.  The cerebellum 
+relaxed well.  The arachnoid over the fifth nerve was not dissected free.  
+The petrosal vein was cauterized and divided.  The fifth nerve was well 
+visualized.  A large vein compressing the fifth nerve was decompressed with 
+Teflon pledgets.  A small artery at the reentry zone was also decompressed 
+with Teflon pledgets.   Having completed the decompression, we turned our 
+attention to closing.  A duraplasty was carried out with bovine pericardium, 
+as the dura could not be closed primarily.  The air cells were re-waxed.  The 
+wound was copiously irrigated with antibiotic saline.  A titanium plate 
+cranioplasty was performed.  The muscle and fascial layers were closed with 
+interrupted inverted 2-0 and 3-0 Vicryl suture, the skin was closed with 
+running 4-0 Ethilon stitch.  Sterile dressings were applied.  The patient was 
+ultimately removed from the Mayfield-Kees headholder, extubated, and 
+transferred to the recovery room in stable condition. 
+ATTESTATION STATEMENT:  Please note Dr. **NAME[ZZZ] and **NAME[M] were present and 
+scrubbed for this procedure and performed the entire procedure with the 
+assistance of Dr. **NAME[UUU]. 
+______________________________________
+**NAME[VVV M. WWW], M.D.
+ 
+Dictator:  **NAME[VVV M. WWW], M.D.
+**INITIALS
+D:  **DATE[Sep 03 2007] 17:36:50
+T:  **DATE[Sep 04 2007] 10:42:43
+R:  **DATE[Sep 04 2007] 10:42:43/rk
+Job ID:  331031/**ID-NUM
+Cc:
+ 
+*** Dictated By: -**NAME[WWW, RRR M]. ***
+Electronically Signed by **NAME[VVV WWW]  **DATE[Sep 10 2007] 05:36:56 PM
+ 
+
+
+
+</report_text>
+</report>

@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='utf-8'?>
+<report>
+<checksum>report105</checksum>
+<subtype>PALLIATIVE CONSULT</subtype>
+<type>HP</type>
+<chief_complaint />
+<admit_diagnosis />
+<discharge_diagnosis />
+<year>2007</year>
+<downlaod_time>2009-10-05</downlaod_time>
+<update_time />
+<deid>v.6.22.08.0</deid>
+<report_text>[Report de-identified (Safe-harbor compliant) by De-ID v.6.22.08.0]
+
+
+ 
+**INSTITUTION
+PALLIATIVE CARE
+CONSULTATION
+ 
+PATIENT NAME:  **NAME[AAA, BBB M]
+ACCOUNT #:  **ID-NUM
+**ROOM
+ATTENDING PHYSICIAN:  **NAME[UUU]  **NAME[VVV]
+CONSULTING PHYSICIAN:  **NAME[UUU]  **NAME[VVV]
+DATE OF ADMISSION:  **DATE[Aug 25 2006]
+DATE OF CONSULTATION:  **DATE[Aug 25 06]  
+ 
+ 
+REASON FOR CONSULT: 
+ 
+1. Discussion of goals.
+2. Symptoms.
+ 
+Ms. **NAME[AAA] is a **AGE[in 70s]-year-old woman who was admitted to **INSTITUTION on **DATE[Aug 25]
+ for some change in mental status, confusion, and agitation.  She had recently
+ been put on _____.  A condition C was called because the patient was found
+ down in a pool of vomit.  A CT of the head showed an acute right
+ frontoparietal parenchymal bleed with intravascular extension and mild right
+ to left subuncal  herniation.   
+ 
+The patient was brought to the unit, sedated with propofol, and put on the
+ ventilator.  Her initial blood pressure 
+Was 210.  Since she has been in the unit, she has remained comfortable.
+ 
+I talked to the patient's husband, sister, son, granddaughter, and niece for a
+ total of 70 minutes.  Greater than 60% of that was face-to-face time with the
+ patient and family.  
+ 
+The patient has a history of hypertension.  
+ 
+Social history:  She lives with her husband and has the family as stated
+ above.  No alcohol, drugs, or tobacco.
+ 
+Family history:  Unremarkable.
+ 
+Review of systems:  Review of systems at the current time is unobtainable from
+ the patient; however, the family thinks the patient is comfortable.  
+ 
+ 
+ 
+ 
+PAST MEDICAL HISTORY:  
+ 
+1. Coronary artery disease/CABG.
+2. CNS aneurysm.
+3. Dementia.
+ 
+PHYSICAL EXAMINATION:
+ 
+The patient is sedate, not responsive to my voice.  She is stable on the
+ ventilator. 
+ 
+Vital signs:  Stable and in no acute distress.
+ 
+Chest:  Clear breath sounds anteriorly.
+ 
+Abdomen:  Nontender.
+ 
+Extremities:  No edema.
+ 
+LABORATORY TESTS:  
+ 
+CT as per above. Chest x-ray shows some mild pulmonary edema.  CT of the head
+ from **DATE[Aug 18] shows there are some  chronic changes and old cerebellar
+ hemorrhages.  BUN and creatinine 11 and 0.8.  Calcium 7.6, albumin in **DATE[Apr]
+ was 4.3.  LFTs in **DATE[Apr] were within normal limits.  Hematocrit is 42.
+ 
+ASSESSMENT:  The patient is a **AGE[in 70s]-year-old woman who suffered a major stroke.
+  
+ 
+PLAN:  
+ 
+1. At the current time, the patient remains comfortable.  I have no further
+ symptom recs.  
+2. If shortness of breath becomes an issue, I would use opiates, for example,
+ morphine 2 mg q. 2 hours p.r.n. 
+3. If delirious, would use Haldol 1 to 2 mg IV q. 1 hours p.r.n..
+ 
+GOALS:  The major amount of time was spent talking to the family about goals.
+ I did discuss with them how this is an acute infarct, and we are not entirely
+ sure how this will play out.  However, given that this was a large infarct
+ with herniation, it is very serious. I tried to stress to them that
+ regardless of what happens, we would keep their loved one comfortable and to
+ the best we can to maximize her care.  I did, however, try to prepare them to
+ the fact that this was a severe stroke that the patient may not recover from.
+   The family certainly seemed to understand.  They are waiting to hear from
+ neurosurgery to hear if there are any other options or to hear what their
+ opinion is.  At the current time, they stressed no needs, but they were going
+ to talk together as a family.  
+ 
+ 
+___________________________________
+**NAME[WWW M. XXX], M.D.
+ 
+ 
+ 
+Dictator:  **NAME[WWW M. XXX], M.D.
+ 
+**INITIALS
+ 
+D:  **DATE[Aug 25 2006] 16:47:41
+T:  **DATE[Aug 26 2006] 04:59:45
+R:  **DATE[Aug 26 2006] 04:59:45/msz
+ 
+Job ID:  110530/**ID-NUM
+ 
+Cc:
+ 
+ 
+ 
+ 
+*** Dictated By: -**NAME[XXX, TTT M]. ***
+Electronically Signed by **NAME[WWW XXX]  **DATE[Sep 14 2006] 07:39:42 AM
+ 
+
+
+
+</report_text>
+</report>
