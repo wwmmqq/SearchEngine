@@ -15,7 +15,6 @@
 		平均:0.139297 s
 	p10: 0.485714
 	map@1000: 0.3100
-
 	
 ## main idea
 1. 用Trie树存储所有关键字, 查询关键字的复杂度为O(关键字长度)
@@ -25,6 +24,12 @@
 3. 搜索变成在Trie树种搜索词，并使用BM25算法计算搜索出的文档的得分
 
 4. 排序，输出
+
+#distributed parameter
+<img src="data/server.bmp">
+
+The server is a distributed system. It provides asynchronous and key-value form's communications between worker machines and server machines.
+
 
 # Todo:
 1. index compress
