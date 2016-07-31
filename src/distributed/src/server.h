@@ -17,5 +17,5 @@ public:
 	void run();
 };
 
-
+#include "server.cc"
 #endif

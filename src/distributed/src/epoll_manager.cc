@@ -38,29 +38,82 @@ void EpollManager::epoll_set_fd_readable(Connection *connection)
 {
 	event.data.ptr = connection;
 	event.events = EPOLLET | EPOLLIN | EPOLLONESHOT;
-	epoll_ctl(epollfd, EPOLL_CTL_MOD, connection->get_descriptor(), &event);
+	epoll_ctl(epoll_fd, EPOLL_CTL_MOD, connection->get_descriptor(), &event);
 }
 
 void EpollManager::epoll_set_fd_writable(Connection *connection)
 {
 	event.data.ptr = connection;
 	event.events = EPOLLET | EPOLLOUT | EPOLLONESHOT;
-	epoll_ctl(epollfd, EPOLL_CTL_MOD, connection->get_descriptor(), &event);
+	epoll_ctl(epoll_fd, EPOLL_CTL_MOD, connection->get_descriptor(), &event);
 }
 
 void EpollManager::epoll_event_handler()
 {
+	std::vector<epoll_event> events_list(64);
+
+	int nready = epoll_wait(epoll_fd, &*events_list.begin(), static_cast<int>(events_list.size()), -1);
+	if(-1 == nready){
+	//Timeout of -1 means epoll_wait will block until any monitored descriptors change
+		continue;
+	}
+
+	if(0 == nready)
+		continue;
+
+	for(int i = 0; i < nready; ++i) {
+		if(events_list[i].data.ptr == nullptr) {
+			while(true) {
+				int peer_fd = accept_nonblocking();
+				if (peer_fd == -1)
+					break;
+				epoll_add_descriptor(peer_fd);
+			}
+		} else {
+			Connection *connection = reinterpret_cast<Connection *>(events_list[i].data.ptr);
+			if(events_list[i].events & EPOLLOUT) {
+				do_write(connection);
+			} else if(events_list[i].events & EPOLLOUT) {
+				do_read(connection);
+			} else {
+				continue;
+			}
+		}
+	} 
 
 }
 
-void EpollManager::do_write(Connection *)
+void EpollManager::do_write(Connection *connection)
 {
-
+	switch (connection->write_to_socket()) {
+		case 1://write didn't finish
+			epoll_set_fd_writable(connection);
+			break;
+		case 2://write was successful, read next
+			 epoll_set_fd_readable(connection);
+			break;
+		case 3://error
+			delete connection;
+			break;
+		default:
+			break;
+	}
 }
 
-void EpollManager::do_read(Connection *)
+void EpollManager::do_read(Connection *connection)
 {
-
+	switch (connection->read_from_socket()) {
+		case 1://read was successful, write next
+			epoll_set_fd_writable(connection);
+			break;
+		case 2://read didn't finish
+			epoll_set_fd_readable(connection);
+			break;
+		case 3://read error or client disconnected
+			delete connection;
+		default:
+			break;
+	}
 }
 
 void EpollManager::start()

@@ -2,6 +2,7 @@
 #define EPOLL_MANAGER_H
 
 #include <sys/epoll.h>
+#include <errno.h>
 
 #include "connection.h"
 
